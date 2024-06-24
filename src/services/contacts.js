@@ -33,7 +33,7 @@ export const updateContact = async (contactId, payload) => {
 };
 
 export const deleteContact = async (contactId) => {
-  return await ContactsCollection.findOneAndDelete(contactId);
+  return await ContactsCollection.findOneAndDelete({ _id: contactId });
 };
 
 export const contactsSevices = {
