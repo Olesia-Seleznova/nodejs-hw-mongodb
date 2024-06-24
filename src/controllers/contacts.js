@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { contactsSevices } from '../services/contacts.js';
 
-export const getAll = async (req, res, next) => {
+export const getAll = async (_req, res, _next) => {
   const contacts = await contactsSevices.getAll();
   res.status(200).json({
     status: 200,
@@ -10,7 +10,7 @@ export const getAll = async (req, res, next) => {
   });
 };
 
-export const getById = async (req, res, next) => {
+export const getById = async (req, res, _next) => {
   const { contactId } = req.params;
   const contact = await contactsSevices.getById(contactId);
   if (!contact) {
@@ -47,7 +47,7 @@ export const updateContact = async (req, res) => {
   });
 };
 
-export const deleteContact = async (req, res, next) => {
+export const deleteContact = async (_req, res, _next) => {
   const result = await contactsSevices.deleteContact();
   if (!result) {
     throw createHttpError(404, 'Contact not found');
