@@ -2,17 +2,31 @@ import { ContactsCollection } from '../db/models/contacts.js';
 import { calcPaginationsData } from '../utils/calcPaginationsData.js';
 
 export const getAll = async ({
+  filter,
   page,
   perPage,
   sortBy = '_id',
   sortOrder = 'asc',
 }) => {
   const skip = (page - 1) * perPage;
-  const data = await ContactsCollection.find()
+
+  const databaseQuery = ContactsCollection.find();
+
+  if (filter.contactType) {
+    databaseQuery.where('contactType').equals(filter.contactType);
+  }
+  if (filter.isFavourite) {
+    databaseQuery.where('isFavorite').equals(filter.isFavourite);
+  }
+
+  const data = await databaseQuery
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
-  const totalItems = await ContactsCollection.countDocuments();
+
+  const totalItems = await ContactsCollection.find()
+    .merge(databaseQuery)
+    .countDocuments();
 
   const { totalPages, hasPreviousPage, hasNextPage } = calcPaginationsData({
     total: totalItems,
