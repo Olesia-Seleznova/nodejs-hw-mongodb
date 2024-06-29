@@ -7,6 +7,10 @@ import { parseContactsFilterParams } from '../utils/parseContactsFilterParams.js
 
 import { contactsFieldList } from '../constants/contacts.js';
 
+import mongoose from 'mongoose';
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
 export const getAll = async (req, res, _next) => {
   const { query } = req;
   const { page, perPage } = parsePaginationParams(query);
@@ -32,6 +36,11 @@ export const getAll = async (req, res, _next) => {
 
 export const getById = async (req, res, _next) => {
   const { contactId } = req.params;
+
+  if (!isValidObjectId(contactId)) {
+    throw createHttpError(400, 'Invalid contact ID');
+  }
+
   const contact = await contactsSevices.getById(contactId);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');

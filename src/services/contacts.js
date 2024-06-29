@@ -24,12 +24,14 @@ export const getAll = async ({
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
 
-  const totalItems = await ContactsCollection.find()
+  const totalItems = await ContactsCollection.find();
+
+  const filteredItems = await ContactsCollection.find()
     .merge(databaseQuery)
     .countDocuments();
 
   const { totalPages, hasPreviousPage, hasNextPage } = calcPaginationsData({
-    total: totalItems,
+    total: filteredItems,
     page,
     perPage,
   });
@@ -39,6 +41,7 @@ export const getAll = async ({
     page,
     perPage,
     totalItems,
+    filteredItems,
     totalPages,
     hasPreviousPage,
     hasNextPage,
