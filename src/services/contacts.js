@@ -24,7 +24,7 @@ export const getAll = async ({
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
 
-  const totalItems = await ContactsCollection.find();
+  const totalItems = await ContactsCollection.find().countDocuments();
 
   const filteredItems = await ContactsCollection.find()
     .merge(databaseQuery)
