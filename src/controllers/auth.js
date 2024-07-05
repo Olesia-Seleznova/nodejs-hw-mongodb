@@ -1,16 +1,24 @@
 import createHttpError from 'http-errors';
-import { authServices } from '../services/auth.js';
+import { signup, findUser } from '../services/auth.js';
 
-export const register = async (req, res, _next) => {
-  const { username, password, email } = req.body;
-  const newUser = await authServices.register({ username, password, email });
+export const signupController = async (req, res) => {
+  const { email } = req.body;
+  const user = await findUser({ email });
+
+  if (user) {
+    throw createHttpError(409, 'Email in use');
+  }
+
+  const newUser = await signup(req.body);
+
+  data = {
+    name: newUser.name,
+    email: newUser.email,
+  };
+
   res.status(201).json({
     status: 201,
-    message: 'Successfully registered!',
+    message: 'Successfully registered a user!',
     data: newUser,
   });
-};
-
-export const authController = {
-  register,
 };

@@ -1,16 +1,5 @@
 import { UserCollection } from '../db/models/user.js';
 
-export const register = async ({ username, password }) => {
-  if (!email) {
-    email = null;
-  }
-  return await UserCollection.create({
-    username,
-    email,
-    password,
-  });
-};
+export const findUser = (filter) => UserCollection.findOne(filter);
 
-export const authServices = {
-  register,
-};
+export const signup = async (data) => UserCollection.create(data);
