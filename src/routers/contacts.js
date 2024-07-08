@@ -10,7 +10,11 @@ import {
   updateContactsSchema,
 } from '../validation/contacts.js';
 
+import { authenticate } from '../middleware/authenticate.js';
+
 const contactsRouter = Router();
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get('/contacts', ctrlWrapper(contactsController.getAll));
 

@@ -12,12 +12,13 @@ import mongoose from 'mongoose';
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 export const getAll = async (req, res, _next) => {
+  const { _id: userId } = req.user;
   const { query } = req;
   const { page, perPage } = parsePaginationParams(query);
 
   const { sortBy, sortOrder } = parseSortParams(query, contactsFieldList);
 
-  const filter = parseContactsFilterParams(query);
+  const filter = { ...parseContactsFilterParams(query), userId };
 
   const contacts = await contactsSevices.getAll({
     page,
@@ -35,25 +36,27 @@ export const getAll = async (req, res, _next) => {
 };
 
 export const getById = async (req, res, _next) => {
-  const { contactId } = req.params;
+  const { _id: userId } = req.user;
+  const { _id } = req.params;
 
-  if (!isValidObjectId(contactId)) {
+  if (!isValidObjectId(userId)) {
     throw createHttpError(400, 'Invalid contact ID');
   }
 
-  const contact = await contactsSevices.getById(contactId);
+  const contact = await contactsSevices.getById({ _id, userId });
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(200).json({
     status: 200,
-    message: `Successfully found contact with id ${contactId}!`,
+    message: `Successfully found contact with id ${_id}!`,
     data: contact,
   });
 };
 
 export const createContact = async (req, res) => {
-  const newContact = await contactsSevices.createContact(req.body);
+  const { _id: userId } = req.user;
+  const newContact = await contactsSevices.createContact(...req.body, userId);
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
