@@ -15,19 +15,19 @@ import { userSignupSchema, userSigninSchema } from '../validation/user.js';
 const authRouter = Router();
 
 authRouter.post(
-  '/signup',
+  '/register',
   validateBody(userSignupSchema),
   ctrlWrapper(signupController),
 );
 
 authRouter.post(
-  '/signin',
+  '/login',
   validateBody(userSigninSchema),
   ctrlWrapper(signinController),
 );
 
 authRouter.post('/refresh', ctrlWrapper(refreshController));
 
-authRouter.post('/signout', ctrlWrapper(signoutController));
+authRouter.post('/logout', ctrlWrapper(signoutController));
 
 export default authRouter;

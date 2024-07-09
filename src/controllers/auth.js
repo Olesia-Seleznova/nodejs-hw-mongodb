@@ -16,7 +16,7 @@ const setupResponseSession = (
     expires: refreshTokenValidUntil,
   });
 
-  res.cookie('ssessionId', _id, {
+  res.cookie('sessionId', _id, {
     httpOnly: true,
     expires: refreshTokenValidUntil,
   });
