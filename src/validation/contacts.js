@@ -15,11 +15,11 @@ export const createContactsSchema = Joi.object({
     'string.max': 'Phone number should have a maximum length of 20 characters.',
     'any.required': 'Phone number is a required field.',
   }),
-  email: Joi.string().email().messages({
+  email: Joi.string().email().optional().messages({
     'string.base': 'Email should be a type of text.',
     'string.email': 'Email must be a valid email address.',
   }),
-  isFavorite: Joi.boolean().messages({
+  isFavourite: Joi.boolean().optional().messages({
     'boolean.base': 'Is Favorite should be a boolean value.',
   }),
   contactType: Joi.string().valid('work', 'home', 'personal').messages({
@@ -42,11 +42,11 @@ export const updateContactsSchema = Joi.object({
     'string.min': 'Phone number should have a minimum length of 3 characters.',
     'string.max': 'Phone number should have a maximum length of 20 characters.',
   }),
-  email: Joi.string().email().messages({
+  email: Joi.string().email().optional().messages({
     'string.base': 'Email should be a type of text.',
     'string.email': 'Email must be a valid email address.',
   }),
-  isFavorite: Joi.boolean().messages({
+  isFavourite: Joi.boolean().optional().messages({
     'boolean.base': 'Is Favorite should be a boolean value.',
   }),
   contactType: Joi.string().valid('work', 'home', 'personal').messages({
