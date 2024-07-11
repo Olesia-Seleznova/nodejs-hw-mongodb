@@ -37,19 +37,19 @@ export const getAll = async (req, res, _next) => {
 
 export const getById = async (req, res, _next) => {
   const { _id: userId } = req.user;
-  const { _id } = req.params;
+  const { contactId } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(contactId)) {
     throw createHttpError(400, 'Invalid contact ID');
   }
 
-  const contact = await contactsSevices.getById({ _id, userId });
+  const contact = await contactsSevices.getById({ _id: contactId, userId });
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(200).json({
     status: 200,
-    message: `Successfully found contact with id ${_id}!`,
+    message: `Successfully found contact with id ${contactId}!`,
     data: contact,
   });
 };
