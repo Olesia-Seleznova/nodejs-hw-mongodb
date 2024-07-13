@@ -3,10 +3,12 @@ import jwt from 'jsonwebtoken';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import bcrypt from 'bcrypt';
 
 import createHttpError from 'http-errors';
 import { UserCollection } from '../db/models/user.js';
 import { hashValue } from '../utils/hash.js';
+import { SessionCollection } from '../db/models/session.js';
 
 import { SMTP, TEMPLATES_DIR } from '../constants/index.js';
 import { sendEmail } from '../utils/sendEmail.js';
@@ -59,4 +61,48 @@ export const requestResetToken = async (email) => {
     subject: 'Reset your password',
     html,
   });
+};
+
+export const resetPassword = async (payload) => {
+  let userData;
+
+  try {
+    userData = jwt.verify(payload.token, env('JWT_SECRET'));
+  } catch (error) {
+    console.log(error.message);
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UserCollection.findOne({
+    email: userData.email,
+    _id: userData.sub,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const isSameAsOldPassword = await bcrypt.compare(
+    payload.password,
+    user.password,
+  );
+  if (isSameAsOldPassword)
+    throw createHttpError(
+      401,
+      'New password must be different from the old password',
+    );
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  await UserCollection.findOneAndUpdate(
+    { _id: user._id },
+    { password: encryptedPassword },
+    { new: true },
+  );
+
+  if (!updatedUser) throw createHttpError(500, 'Fail to update password');
+
+  await SessionCollection.deleteOne({ userId: user._id });
+
+  return updatedUser;
 };

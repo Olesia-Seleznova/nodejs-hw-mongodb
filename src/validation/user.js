@@ -47,3 +47,16 @@ export const requestResetTokenSchema = Joi.object({
     'any.required': 'Email is a required field.',
   }),
 });
+
+export const resetPasswordSchema = Joi.object({
+  password: Joi.string().required().messages({
+    'string.base': 'Password should be a type of string',
+    'string.empty': 'Password cannot be an empty field',
+    'any.required': 'Password is a required field',
+  }),
+  token: Joi.string().required().messages({
+    'string.base': 'Token should be a type of string',
+    'string.empty': 'Token cannot be an empty field',
+    'any.required': 'Token is a required field',
+  }),
+});
