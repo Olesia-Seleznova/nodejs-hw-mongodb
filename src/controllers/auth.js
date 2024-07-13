@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+
 import { signup, findUser } from '../services/auth.js';
 import { compareHash } from '../utils/hash.js';
 import {
@@ -6,6 +7,8 @@ import {
   findSession,
   deleteSession,
 } from '../services/session.js';
+
+import { requestResetToken } from '../services/auth.js';
 
 const setupResponseSession = (
   res,
@@ -44,7 +47,7 @@ export const signupController = async (req, res) => {
   });
 };
 
-export const signinController = async (req, res) => {
+export const signinController = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await findUser({ email });
 
@@ -70,7 +73,7 @@ export const signinController = async (req, res) => {
   });
 };
 
-export const refreshController = async (req, res) => {
+export const refreshController = async (req, res, next) => {
   const { refreshToken, sessionId } = req.cookies;
 
   if (!refreshToken || !sessionId) {
@@ -102,7 +105,7 @@ export const refreshController = async (req, res) => {
   });
 };
 
-export const signoutController = async (req, res) => {
+export const signoutController = async (req, res, next) => {
   const { sessionId } = req.cookies;
   if (!sessionId) {
     throw createHttpError(401, 'Session not found');
@@ -114,4 +117,17 @@ export const signoutController = async (req, res) => {
   res.clearCookie('refreshToken');
 
   res.status(204).send();
+};
+
+export const requestResetEmailController = async (req, res, next) => {
+  try {
+    await requestResetToken(req.body.email);
+    res.json({
+      status: 200,
+      message: 'Reset password email has been successfully sent.',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };
