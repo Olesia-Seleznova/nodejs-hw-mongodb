@@ -10,3 +10,5 @@ export const contactsFieldList = [
 ];
 
 export const typeContactsList = ['work', 'home', 'personal'];
+
+
