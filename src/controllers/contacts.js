@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 import { contactsSevices } from '../services/contacts.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
@@ -7,7 +8,8 @@ import { parseContactsFilterParams } from '../utils/parseContactsFilterParams.js
 
 import { contactsFieldList } from '../constants/contacts.js';
 
-import mongoose from 'mongoose';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -58,6 +60,12 @@ export const createContact = async (req, res) => {
   const { _id: userId } = req.user;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
+  let photo;
+
+  if (req.file) {
+    photo = await saveFileToCloudinary(req.file);
+  }
+
   const newContact = await contactsSevices.createContact({
     name,
     phoneNumber,
@@ -65,7 +73,9 @@ export const createContact = async (req, res) => {
     isFavourite,
     contactType,
     userId,
+    photo,
   });
+
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -74,10 +84,14 @@ export const createContact = async (req, res) => {
 };
 
 export const updateContact = async (req, res) => {
-  const contact = await contactsSevices.updateContact(
-    req.params.contactId,
-    req.body,
-  );
+  const { contactId } = req.params;
+  const { body, file } = req;
+
+  if (file) {
+    const photo = await saveFileToCloudinary(file);
+    body.photo = photo;
+  }
+  const contact = await contactsSevices.updateContact(contactId, body);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
@@ -96,6 +110,8 @@ export const deleteContact = async (req, res, _next) => {
   }
   res.status(204).send();
 };
+
+export const patchContactController = async (req, res, next) => {};
 
 export const contactsController = {
   getAll,
