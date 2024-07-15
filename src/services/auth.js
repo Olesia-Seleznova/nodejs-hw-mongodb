@@ -94,7 +94,7 @@ export const resetPassword = async (payload) => {
 
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
-  await UserCollection.findOneAndUpdate(
+  const updatedUser = await UserCollection.findOneAndUpdate(
     { _id: user._id },
     { password: encryptedPassword },
     { new: true },

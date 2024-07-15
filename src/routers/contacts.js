@@ -12,6 +12,8 @@ import {
 
 import { authenticate } from '../middleware/authenticate.js';
 
+import { upload } from '../middleware/multer.js';
+
 const contactsRouter = Router();
 
 contactsRouter.use(authenticate);
@@ -25,12 +27,14 @@ contactsRouter.get(
 
 contactsRouter.post(
   '/contacts',
+  upload.single('photo'),
   validateBody(createContactsSchema),
   ctrlWrapper(contactsController.createContact),
 );
 
 contactsRouter.patch(
   '/contacts/:contactId',
+  upload.single('photo'),
   validateBody(updateContactsSchema),
   ctrlWrapper(contactsController.updateContact),
 );

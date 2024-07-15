@@ -9,6 +9,7 @@ import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 dotenv.config();
 // console.log(process.env);
@@ -30,6 +31,7 @@ export default function setupServer() {
 
   app.use('/auth', authRouter);
   app.use(contactsRouter);
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use('*', notFoundHandler);
   app.use(errorHandler);

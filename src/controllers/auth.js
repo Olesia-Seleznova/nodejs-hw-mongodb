@@ -47,7 +47,7 @@ export const signupController = async (req, res) => {
   });
 };
 
-export const signinController = async (req, res, next) => {
+export const signinController = async (req, res) => {
   const { email, password } = req.body;
   const user = await findUser({ email });
 
@@ -73,7 +73,7 @@ export const signinController = async (req, res, next) => {
   });
 };
 
-export const refreshController = async (req, res, next) => {
+export const refreshController = async (req, res) => {
   const { refreshToken, sessionId } = req.cookies;
 
   if (!refreshToken || !sessionId) {
@@ -119,17 +119,13 @@ export const signoutController = async (req, res, next) => {
   res.status(204).send();
 };
 
-export const requestResetEmailController = async (req, res, next) => {
-  try {
-    await requestResetToken(req.body.email);
-    res.json({
-      status: 200,
-      message: 'Reset password email has been successfully sent.',
-      data: {},
-    });
-  } catch (error) {
-    next(error);
-  }
+export const requestResetEmailController = async (req, res) => {
+  await requestResetToken(req.body.email);
+  res.json({
+    status: 200,
+    message: 'Reset password email was successfully sent.',
+    data: {},
+  });
 };
 
 export const resetPasswordController = async (req, res) => {
