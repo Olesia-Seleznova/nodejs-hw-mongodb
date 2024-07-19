@@ -11,8 +11,9 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { UPLOAD_DIR } from './constants/index.js';
 
+import { swaggerDocs } from './middleware/swaggerDocs.js';
+
 dotenv.config();
-// console.log(process.env);
 const PORT = Number(env('PORT', '3000'));
 
 export default function setupServer() {
@@ -32,6 +33,8 @@ export default function setupServer() {
   app.use('/auth', authRouter);
   app.use(contactsRouter);
   app.use('/uploads', express.static(UPLOAD_DIR));
+
+  app.use('/api-docs', swaggerDocs());
 
   app.use('*', notFoundHandler);
   app.use(errorHandler);
