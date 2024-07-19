@@ -26,7 +26,7 @@ properties:
   contactType:
     description: 'Shows which group the contact belongs to'
     type: string
-    enum: ['home', 'work', 'personnel']
+    enum: ['home', 'work', 'personal']
   userId:
     description: "User's id to which this contact belongs to"
     type: string
